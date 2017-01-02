@@ -5,13 +5,13 @@ import (
 )
 
 func main() {
-	for ;; {
+	for {
 		fmt.Print(labels.Start)
 
 		config.Username = readInput(labels.Username, "", true)
 
 		Loop:
-		for ;; {
+		for {
 			option := readInput(labels.SelectAction, options.List, false)
 
 			switch option {
@@ -19,6 +19,7 @@ func main() {
 				UpdateAction(config)
 				break
 			case options.Restart:
+				githubAccessToken = ""
 				break Loop
 			default:
 				ListAction(config)

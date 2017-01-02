@@ -9,7 +9,7 @@ import (
 type Config struct {
 	Token            string
 	Username         string
-	LicenseFilename  string
+	LicenseFilenames string
 	Branch           string
 	CopyrightPattern string
 	CommitMessage    string
@@ -24,17 +24,20 @@ type RepositoryConfig struct {
 }
 
 type Labels struct {
-	Start            string
-	Token            string
-	Username         string
-	Required         string
-	SelectAction     string
-	LicenseFilename  string
-	Branch           string
-	CopyrightPattern string
-	CommitMessage    string
-	CurrentYear      string
-	NextPageOrSkip   string
+	Start                    string
+	Token                    string
+	Username                 string
+	Required                 string
+	SelectAction             string
+	LicenseFilenames         string
+	Branch                   string
+	CommitMessage            string
+	CurrentYear              string
+	NextPageOrSkip           string
+	RepositoryLine           string
+	LicenseFileNotFound      string
+	CopyrightPatternNotFound string
+	YearHasNotChanged        string
 }
 
 type Options struct {
@@ -46,9 +49,9 @@ type Options struct {
 }
 
 var config = &Config{
-	LicenseFilename: "LICENSE",
+	LicenseFilenames: "LICENSE, LICENSE.md, LICENSE.txt",
 	Branch: "master",
-	CopyrightPattern:  "Copyright \\(c\\) (\\d+)-(\\d+)",
+	CopyrightPattern:  "Copyright \\(c\\) ([0-9]{4})-?([0-9]{4})?",
 	CommitMessage: "Update license.",
 	CurrentYear: strconv.FormatInt(int64(time.Now().Year()), 10),
 	Repository: &RepositoryConfig{
@@ -77,10 +80,13 @@ var labels = &Labels{
 		options.Update,
 		options.Restart,
 	),
-	LicenseFilename: fmt.Sprintf("License filename (%s): ", config.LicenseFilename),
+	LicenseFilenames: fmt.Sprintf("License filenames, comma separated (%s): ", config.LicenseFilenames),
 	Branch: fmt.Sprintf("Branch (%s): ", config.Branch),
-	CopyrightPattern: fmt.Sprintf("Copyright pattern (%s): ", config.CopyrightPattern),
 	CommitMessage: fmt.Sprintf("Commit message (%s): ", config.CommitMessage),
 	CurrentYear: fmt.Sprintf("Current year (%s): ", config.CurrentYear),
 	NextPageOrSkip: fmt.Sprintf("\nNext page (%s) | Skip (%s): ", options.NextPage, options.Skip),
+	RepositoryLine: "\n%s... ",
+	LicenseFileNotFound: "License file not found.",
+	CopyrightPatternNotFound: fmt.Sprintf("Copyright pattern not found: %s", config.CopyrightPattern),
+	YearHasNotChanged: "Year has not changed",
 }

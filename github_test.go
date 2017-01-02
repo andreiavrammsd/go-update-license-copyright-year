@@ -7,11 +7,19 @@ import (
 )
 
 func TestNewGithubClientWithToken(t *testing.T) {
-	client := NewGithubClient("token")
-	assert.IsType(t, client, &github.Client{})
+	config := &Config{
+		Token: "token",
+	}
+	client := NewGithubClient(config)
+	assert.IsType(t, client, &GithubClient{})
+	assert.IsType(t, client.Client, &github.Client{})
+	assert.Equal(t, config, client.Config)
 }
 
 func TestNewGithubClientWithOutToken(t *testing.T) {
-	client := NewGithubClient("")
-	assert.IsType(t, client, &github.Client{})
+	config = &Config{}
+	client := NewGithubClient(config)
+	assert.IsType(t, client, &GithubClient{})
+	assert.IsType(t, client.Client, &github.Client{})
+	assert.Equal(t, config, client.Config)
 }

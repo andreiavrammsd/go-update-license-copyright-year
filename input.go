@@ -14,7 +14,7 @@ var scan = func() string {
 }
 
 func readInput(text, defaultValue string, required bool) string {
-	for ;; {
+	for {
 		fmt.Print(text)
 		input := strings.Trim(scan(), " ")
 

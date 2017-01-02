@@ -2,24 +2,16 @@ package main
 
 import (
 	"fmt"
-	"github.com/google/go-github/github"
+	"github.com/fatih/color"
 )
 
 func ListAction(config *Config) {
-	client := NewGithubClient(config.Token)
+	client := NewGithubClient(config)
 	page := 1
 
 	Loop:
-	for ;; {
-		o := &github.RepositoryListOptions{
-			Sort: config.Repository.ListSortBy,
-			Type: config.Repository.ListFilterByType,
-			ListOptions: github.ListOptions{
-				Page: page,
-				PerPage: config.Repository.ListPerPage,
-			},
-		}
-		repos, resp, err := client.Repositories.List(config.Username, o)
+	for {
+		repos, resp, err := client.GetRepositories(page)
 
 		if err != nil {
 			fmt.Println(err.Error())
@@ -31,7 +23,7 @@ func ListAction(config *Config) {
 		}
 
 		if resp.NextPage == 0 {
-			break Loop
+			break
 		}
 
 		option := readInput(labels.NextPageOrSkip, options.NextPage, false)
@@ -46,12 +38,60 @@ func ListAction(config *Config) {
 	fmt.Println()
 }
 
+var githubAccessToken string
+
 func UpdateAction(config *Config) {
-	config.Token = readInput(labels.Token, config.Token, true)
-	config.LicenseFilename = readInput(labels.LicenseFilename, config.LicenseFilename, false)
+	if len(githubAccessToken) == 0 {
+		githubAccessToken = readInput(labels.Token, config.Token, true)
+		config.Token = githubAccessToken
+	}
+	config.LicenseFilenames = readInput(labels.LicenseFilenames, config.LicenseFilenames, false)
 	config.Branch = readInput(labels.Branch, config.Branch, false)
-	config.CopyrightPattern = readInput(labels.CopyrightPattern, config.CopyrightPattern, false)
 	config.CommitMessage = readInput(labels.CommitMessage, config.CommitMessage, false)
 	config.CurrentYear = readInput(labels.CurrentYear, config.CurrentYear, false)
-	fmt.Println(config)
+
+	client := NewGithubClient(config)
+	page := 1
+
+	for {
+		repos, resp, err := client.GetRepositories(page)
+
+		if err != nil {
+			fmt.Println(err.Error())
+			continue
+		}
+		
+		for _, repo := range repos {
+			fmt.Printf(labels.RepositoryLine, *repo.Name)
+
+			file, err := client.GetFileContent(repo.Name)
+			if err != nil {
+				color.Red(err.Error())
+				continue
+			}
+
+			oldContent, _ := file.GetContent()
+			newContent, err := updateCopyrightYear(oldContent, config.CopyrightPattern, config.CurrentYear)
+			if err != nil {
+				color.Red(err.Error())
+				continue
+			}
+			
+			client.UpdateFile(repo, file, &newContent)
+			if err != nil {
+				color.Red(err.Error())
+				continue
+			}
+			
+			if len(newContent) > 0 {
+				color.Green("Updated")
+			}
+		}
+		
+		if resp.NextPage == 0 {
+			break
+		}
+	}
+	
+	fmt.Println()
 }
