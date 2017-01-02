@@ -1,0 +1,29 @@
+package main
+
+import (
+	"fmt"
+)
+
+func main() {
+	for ;; {
+		fmt.Print(labels.Start)
+
+		config.Username = readInput(labels.Username, "", true)
+
+		Loop:
+		for ;; {
+			option := readInput(labels.SelectAction, options.List, false)
+
+			switch option {
+			case options.Update:
+				UpdateAction(config)
+				break
+			case options.Restart:
+				break Loop
+			default:
+				ListAction(config)
+				break
+			}
+		}
+	}
+}
