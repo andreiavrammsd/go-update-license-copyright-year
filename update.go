@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"strings"
 	"errors"
+	"fmt"
 )
 
 func updateCopyrightYear(content string, copyrightPattern string, newYear string) (string, error) {
@@ -16,17 +17,23 @@ func updateCopyrightYear(content string, copyrightPattern string, newYear string
 	if len(copyright) == 0 {
 		return "", errors.New(labels.CopyrightPatternNotFound)
 	}
-
+	
 	lastIndex := len(copyright) - 1
+	singleYear := false
 	if copyright[lastIndex] == "" {
 		copyright = copyright[:lastIndex]
 		lastIndex--
+		singleYear = true
 	}
 	oldCopyright := copyright[0]
 	oldYear := copyright[lastIndex]
 
 	if newYear == oldYear {
 		return "", errors.New(labels.YearHasNotChanged)
+	}
+	
+	if singleYear == true {
+		newYear = fmt.Sprintf("%s-%s", oldYear, newYear)
 	}
 
 	newCopyright := strings.Replace(oldCopyright, oldYear, newYear, 1)

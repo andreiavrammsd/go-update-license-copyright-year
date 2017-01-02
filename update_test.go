@@ -26,7 +26,7 @@ func TestUpdateCopyrightYearOneYear(t *testing.T) {
 	newYear := "2017"
 
 	newContent, err := updateCopyrightYear(content, copyrightPattern, newYear)
-	expected := `Copyright (c) 2017 Andrei Avram
+	expected := `Copyright (c) 1998-2017 Andrei Avram
 		Permission is hereby granted, free of charge...`;
 
 	assert.Equal(t, expected, newContent)
