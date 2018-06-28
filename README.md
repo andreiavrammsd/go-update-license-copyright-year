@@ -1,7 +1,5 @@
 # Update Github repositories license copyright year
 
-## This is just an exercise, not considered totally reliable
-
 ### I wanted to update the license files of all my Github repositories
  
 #### What it does

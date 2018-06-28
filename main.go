@@ -1,8 +1,6 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 func main() {
 	for {
@@ -10,20 +8,18 @@ func main() {
 
 		config.Username = readInput(labels.Username, "", true)
 
-		Loop:
+	Loop:
 		for {
 			option := readInput(labels.SelectAction, options.List, false)
 
 			switch option {
 			case options.Update:
 				UpdateAction(config)
-				break
 			case options.Restart:
 				githubAccessToken = ""
 				break Loop
 			default:
 				ListAction(config)
-				break
 			}
 		}
 	}

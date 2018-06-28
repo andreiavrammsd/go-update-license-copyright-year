@@ -2,8 +2,9 @@ package main
 
 import (
 	"testing"
-	"github.com/stretchr/testify/assert"
+
 	"github.com/google/go-github/github"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewGithubClientWithToken(t *testing.T) {
@@ -16,7 +17,7 @@ func TestNewGithubClientWithToken(t *testing.T) {
 	assert.Equal(t, config, client.Config)
 }
 
-func TestNewGithubClientWithOutToken(t *testing.T) {
+func TestNewGithubClientWithoutToken(t *testing.T) {
 	config = &Config{}
 	client := NewGithubClient(config)
 	assert.IsType(t, client, &GithubClient{})

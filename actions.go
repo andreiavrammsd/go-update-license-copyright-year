@@ -2,14 +2,16 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/fatih/color"
 )
 
+// ListAction lists paginated repositories
 func ListAction(config *Config) {
 	client := NewGithubClient(config)
 	page := 1
 
-	Loop:
+Loop:
 	for {
 		repos, resp, err := client.GetRepositories(page)
 
@@ -40,6 +42,7 @@ func ListAction(config *Config) {
 
 var githubAccessToken string
 
+// UpdateAction brings copyright year up to date if license files found
 func UpdateAction(config *Config) {
 	if len(githubAccessToken) == 0 {
 		githubAccessToken = readInput(labels.Token, config.Token, true)
@@ -60,7 +63,7 @@ func UpdateAction(config *Config) {
 			fmt.Println(err.Error())
 			continue
 		}
-		
+
 		for _, repo := range repos {
 			fmt.Printf(labels.RepositoryLine, *repo.Name)
 
@@ -70,28 +73,35 @@ func UpdateAction(config *Config) {
 				continue
 			}
 
-			oldContent, _ := file.GetContent()
+			oldContent, err := file.GetContent()
+			if err != nil {
+				color.Red(err.Error())
+				continue
+			}
+
 			newContent, err := updateCopyrightYear(oldContent, config.CopyrightPattern, config.CurrentYear)
 			if err != nil {
 				color.Red(err.Error())
 				continue
 			}
-			
-			client.UpdateFile(repo, file, &newContent)
+
+			err = client.UpdateFile(repo, file, &newContent)
 			if err != nil {
 				color.Red(err.Error())
 				continue
 			}
-			
+
 			if len(newContent) > 0 {
 				color.Green("Updated")
 			}
+			fmt.Println(newContent)
+			break
 		}
-		
+
 		if resp.NextPage == 0 {
 			break
 		}
 	}
-	
+
 	fmt.Println()
 }

@@ -1,11 +1,12 @@
 package main
 
 import (
-	"time"
-	"strconv"
 	"fmt"
+	"strconv"
+	"time"
 )
 
+// Config params
 type Config struct {
 	Token            string
 	Username         string
@@ -17,12 +18,14 @@ type Config struct {
 	Repository       *RepositoryConfig
 }
 
+// RepositoryConfig for listing
 type RepositoryConfig struct {
 	ListPerPage      int
 	ListSortBy       string
 	ListFilterByType string
 }
 
+// Labels for prompt
 type Labels struct {
 	Start                    string
 	Token                    string
@@ -40,6 +43,7 @@ type Labels struct {
 	YearHasNotChanged        string
 }
 
+// Options values for user input
 type Options struct {
 	List     string
 	Update   string
@@ -50,28 +54,28 @@ type Options struct {
 
 var config = &Config{
 	LicenseFilenames: "LICENSE, LICENSE.md, LICENSE.txt",
-	Branch: "master",
-	CopyrightPattern:  "Copyright \\(c\\) ([0-9]{4})-?([0-9]{4})?",
-	CommitMessage: "Update license.",
-	CurrentYear: strconv.FormatInt(int64(time.Now().Year()), 10),
+	Branch:           "master",
+	CopyrightPattern: "Copyright \\(c\\) ([0-9]{4})-?([0-9]{4})?",
+	CommitMessage:    "Update license.",
+	CurrentYear:      strconv.FormatInt(int64(time.Now().Year()), 10),
 	Repository: &RepositoryConfig{
-		ListPerPage: 30,
-		ListSortBy: "name",
+		ListPerPage:      30,
+		ListSortBy:       "name",
 		ListFilterByType: "owner",
 	},
 }
 
 var options = &Options{
-	List: "l",
-	Update: "u",
-	Restart: "r",
+	List:     "l",
+	Update:   "u",
+	Restart:  "r",
 	NextPage: "n",
-	Skip: "s",
+	Skip:     "s",
 }
 
 var labels = &Labels{
-	Start: "\nQuit any time with Ctrl + C\n\n",
-	Token: "\nGithub access token: ",
+	Start:    "\nQuit any time with Ctrl + C\n\n",
+	Token:    "\nGithub access token: ",
 	Username: "Insert username: ",
 	Required: "Required\n",
 	SelectAction: fmt.Sprintf(
@@ -80,13 +84,13 @@ var labels = &Labels{
 		options.Update,
 		options.Restart,
 	),
-	LicenseFilenames: fmt.Sprintf("License filenames, comma separated (%s): ", config.LicenseFilenames),
-	Branch: fmt.Sprintf("Branch (%s): ", config.Branch),
-	CommitMessage: fmt.Sprintf("Commit message (%s): ", config.CommitMessage),
-	CurrentYear: fmt.Sprintf("Current year (%s): ", config.CurrentYear),
-	NextPageOrSkip: fmt.Sprintf("\nNext page (%s) | Skip (%s): ", options.NextPage, options.Skip),
-	RepositoryLine: "\n%s... ",
-	LicenseFileNotFound: "License file not found.",
+	LicenseFilenames:         fmt.Sprintf("License filenames, comma separated (%s): ", config.LicenseFilenames),
+	Branch:                   fmt.Sprintf("Branch (%s): ", config.Branch),
+	CommitMessage:            fmt.Sprintf("Commit message (%s): ", config.CommitMessage),
+	CurrentYear:              fmt.Sprintf("Current year (%s): ", config.CurrentYear),
+	NextPageOrSkip:           fmt.Sprintf("\nNext page (%s) | Skip (%s): ", options.NextPage, options.Skip),
+	RepositoryLine:           "\n%s... ",
+	LicenseFileNotFound:      "License file not found.",
 	CopyrightPatternNotFound: fmt.Sprintf("Copyright pattern not found: %s", config.CopyrightPattern),
-	YearHasNotChanged: "Year has not changed",
+	YearHasNotChanged:        "Year has not changed",
 }

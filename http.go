@@ -1,11 +1,13 @@
 package main
 
 import (
-	"golang.org/x/oauth2"
+	"context"
 	"net/http"
+
+	"golang.org/x/oauth2"
 )
 
-func getHttpClient(token string) *http.Client {
+func getHTTPClient(token string) *http.Client {
 	var ts oauth2.TokenSource
 	if len(token) > 0 {
 		ts = oauth2.StaticTokenSource(
@@ -13,9 +15,7 @@ func getHttpClient(token string) *http.Client {
 				AccessToken: token,
 			},
 		)
-	} else {
-		ts = nil
 	}
 
-	return oauth2.NewClient(oauth2.NoContext, ts)
+	return oauth2.NewClient(context.TODO(), ts)
 }

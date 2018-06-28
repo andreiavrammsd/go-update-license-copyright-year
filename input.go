@@ -1,10 +1,10 @@
 package main
 
 import (
-	"os"
-	"fmt"
-	"strings"
 	"bufio"
+	"fmt"
+	"os"
+	"strings"
 )
 
 var scan = func() string {
@@ -18,19 +18,19 @@ func readInput(text, defaultValue string, required bool) string {
 		fmt.Print(text)
 		input := strings.Trim(scan(), " ")
 
-		if required == true {
+		if required {
 			if len(input) == 0 {
 				fmt.Print(labels.Required)
 				continue
 			}
 
 			return input
-		} else {
-			if len(input) > 0 {
-				return input
-			}
-
-			return defaultValue
 		}
+
+		if len(input) > 0 {
+			return input
+		}
+
+		return defaultValue
 	}
 }
